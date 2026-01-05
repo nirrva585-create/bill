@@ -1,712 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flipkart-Style Bill Generator</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --flipkart-blue: #2874f0;
-            --flipkart-yellow: #ffe500;
-            --flipkart-light-bg: #f1f3f6;
-            --flipkart-dark-text: #212121;
-            --flipkart-light-text: #878787;
-            --flipkart-green: #388e3c;
-            --flipkart-border: #e0e0e0;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: var(--flipkart-light-bg);
-            color: var(--flipkart-dark-text);
-            line-height: 1.6;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        header {
-            background: linear-gradient(to right, var(--flipkart-blue) 0%, var(--flipkart-blue) 70%, var(--flipkart-yellow) 70%, var(--flipkart-yellow) 100%);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-radius: 8px 8px 0 0;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        header h1 {
-            margin-bottom: 10px;
-            font-size: 2.5rem;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-        }
-        
-        header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        
-        .main-content {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .input-section {
-            flex: 1;
-            min-width: 300px;
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .preview-section {
-            flex: 1;
-            min-width: 300px;
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .section-title {
-            color: var(--flipkart-blue);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--flipkart-border);
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--flipkart-dark-text);
-        }
-        
-        input, select, textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid var(--flipkart-border);
-            border-radius: 4px;
-            font-size: 16px;
-            transition: border 0.3s;
-        }
-        
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--flipkart-blue);
-            outline: none;
-        }
-        
-        .logo-upload {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .logo-preview {
-            width: 150px;
-            height: 150px;
-            border: 2px dashed var(--flipkart-border);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
-            overflow: hidden;
-            background: #f9f9f9;
-        }
-        
-        .logo-preview img {
-            max-width: 100%;
-            max-height: 100%;
-            display: none;
-        }
-        
-        .upload-btn {
-            background: var(--flipkart-blue);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-        }
-        
-        .upload-btn:hover {
-            background: #1c60d1;
-        }
-        
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        
-        .items-table th, .items-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--flipkart-border);
-        }
-        
-        .items-table th {
-            background-color: #f5f5f5;
-            font-weight: 600;
-        }
-        
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .btn-primary {
-            background: var(--flipkart-blue);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #1c60d1;
-        }
-        
-        .btn-success {
-            background: var(--flipkart-green);
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: #2c7a2c;
-        }
-        
-        .btn-danger {
-            background: #f02847;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #d11c3c;
-        }
-        
-        .bill-preview {
-            flex: 1;
-            border: 1px solid var(--flipkart-border);
-            border-radius: 8px;
-            padding: 20px;
-            background: white;
-            overflow-y: auto;
-        }
-        
-        .bill-header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--flipkart-border);
-        }
-        
-        .bill-logo {
-            max-width: 180px;
-            max-height: 100px;
-            margin-bottom: 15px;
-        }
-        
-        .bill-details {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .bill-to, .bill-meta {
-            flex: 1;
-            min-width: 250px;
-        }
-        
-        .bill-meta {
-            text-align: right;
-        }
-        
-        .bill-items {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-        }
-        
-        .bill-items th {
-            background-color: #f5f5f5;
-            padding: 12px;
-            text-align: left;
-            border-bottom: 2px solid var(--flipkart-border);
-        }
-        
-        .bill-items td {
-            padding: 12px;
-            border-bottom: 1px solid var(--flipkart-border);
-        }
-        
-        .bill-total {
-            text-align: right;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid var(--flipkart-border);
-        }
-        
-        .bill-notes {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid var(--flipkart-border);
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .flipkart-stamp {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-        
-        .stamp {
-            border: 2px solid var(--flipkart-green);
-            color: var(--flipkart-green);
-            padding: 8px 15px;
-            border-radius: 4px;
-            font-weight: bold;
-            transform: rotate(15deg);
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            padding: 20px;
-            color: var(--flipkart-light-text);
-            font-size: 0.9rem;
-        }
-        
-        @media (max-width: 768px) {
-            .main-content {
-                flex-direction: column;
-            }
-            
-            .bill-details {
-                flex-direction: column;
-            }
-            
-            .bill-meta {
-                text-align: left;
-                margin-top: 20px;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Code Generator</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #0f172a;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .box {
+        background: #020617;
+        padding: 25px;
+        border-radius: 10px;
+        width: 360px;
+        text-align: center;
+        box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    }
+
+    h2 {
+        margin-bottom: 15px;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        text-align: center;
+        border-radius: 6px;
+        border: none;
+        margin-bottom: 10px;
+        background: #020617;
+        color: #22c55e;
+        border: 1px solid #334155;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 8px;
+        background: #22c55e;
+        color: #020617;
+        font-weight: bold;
+    }
+
+    button:hover {
+        background: #16a34a;
+    }
+
+    .copy {
+        background: #38bdf8;
+    }
+
+    .copy:hover {
+        background: #0ea5e9;
+    }
+
+    .len {
+        margin-bottom: 10px;
+        color: #cbd5f5;
+        font-size: 14px;
+    }
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-shopping-bag"></i> Flipkart-Style Bill Generator</h1>
-            <p>Create professional invoices in Indian Rupees with your own logo</p>
-        </header>
-        
-        <div class="main-content">
-            <div class="input-section">
-                <h2 class="section-title"><i class="fas fa-edit"></i> Bill Details</h2>
-                
-                <div class="logo-upload">
-                    <div class="logo-preview">
-                        <img id="logo-image" src="" alt="Logo Preview">
-                        <span id="logo-placeholder">Your Logo</span>
-                    </div>
-                    <label for="logo-upload-input" class="upload-btn">
-                        <i class="fas fa-upload"></i> Upload Logo
-                    </label>
-                    <input type="file" id="logo-upload-input" accept="image/*" style="display: none;">
-                </div>
-                
-                <div class="form-group">
-                    <label for="company-name"><i class="fas fa-building"></i> Company Name</label>
-                    <input type="text" id="company-name" placeholder="Enter your company name" value="Flipkart India Pvt. Ltd.">
-                </div>
-                
-                <div class="form-group">
-                    <label for="company-address"><i class="fas fa-map-marker-alt"></i> Company Address</label>
-                    <textarea id="company-address" rows="3" placeholder="Enter your company address">Aurobindo Galaxy, Talaplalli, Bengaluru, Karnataka 560034</textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="client-name"><i class="fas fa-user"></i> Client Name</label>
-                    <input type="text" id="client-name" placeholder="Enter client name" value="Rahul Sharma">
-                </div>
-                
-                <div class="form-group">
-                    <label for="client-address"><i class="fas fa-map-marked-alt"></i> Client Address</label>
-                    <textarea id="client-address" rows="3" placeholder="Enter client address">123, MG Road, Mumbai, Maharashtra 400001</textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="invoice-number"><i class="fas fa-file-invoice"></i> Invoice Number</label>
-                    <input type="text" id="invoice-number" placeholder="e.g., INV-001" value="FK-2023-0876">
-                </div>
-                
-                <div class="form-group">
-                    <label for="invoice-date"><i class="fas fa-calendar-alt"></i> Invoice Date</label>
-                    <input type="date" id="invoice-date">
-                </div>
-                
-                <div class="form-group">
-                    <label for="due-date"><i class="fas fa-clock"></i> Due Date</label>
-                    <input type="date" id="due-date">
-                </div>
-                
-                <h2 class="section-title"><i class="fas fa-list"></i> Items</h2>
-                
-                <table class="items-table">
-                    <thead>
-                        <tr>
-                            <th>Description</th>
-                            <th>Quantity</th>
-                            <th>Price (₹)</th>
-                            <th>Total (₹)</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="items-body">
-                        <tr>
-                            <td><input type="text" class="item-desc" placeholder="Item description" value="Wireless Headphones"></td>
-                            <td><input type="number" class="item-qty" placeholder="Qty" min="1" value="2"></td>
-                            <td><input type="number" class="item-price" placeholder="Price" min="0" step="0.01" value="1999"></td>
-                            <td class="item-total">₹3,998.00</td>
-                            <td><button class="btn btn-danger remove-item"><i class="fas fa-trash"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td><input type="text" class="item-desc" placeholder="Item description" value="Smartphone Case"></td>
-                            <td><input type="number" class="item-qty" placeholder="Qty" min="1" value="1"></td>
-                            <td><input type="number" class="item-price" placeholder="Price" min="0" step="0.01" value="499"></td>
-                            <td class="item-total">₹499.00</td>
-                            <td><button class="btn btn-danger remove-item"><i class="fas fa-trash"></i></button></td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <button id="add-item" class="btn btn-primary"><i class="fas fa-plus"></i> Add Item</button>
-                
-                <div class="form-group" style="margin-top: 20px;">
-                    <label for="notes"><i class="fas fa-sticky-note"></i> Notes</label>
-                    <textarea id="notes" rows="3" placeholder="Thank you for your business!">Thank you for shopping with us! Items are non-refundable but can be replaced within 10 days if defective.</textarea>
-                </div>
-                
-                <button id="generate-bill" class="btn btn-success" style="width: 100%; margin-top: 20px;">
-                    <i class="fas fa-file-invoice"></i> Generate Bill
-                </button>
-            </div>
-            
-            <div class="preview-section">
-                <h2 class="section-title"><i class="fas fa-eye"></i> Bill Preview</h2>
-                
-                <div class="bill-preview">
-                    <div class="bill-header">
-                        <img id="bill-logo" class="bill-logo" src="" alt="Company Logo" style="display: none;">
-                        <h2 id="bill-company-name">Flipkart India Pvt. Ltd.</h2>
-                        <p id="bill-company-address">Aurobindo Galaxy, Talaplalli, Bengaluru, Karnataka 560034</p>
-                    </div>
-                    
-                    <div class="bill-details">
-                        <div class="bill-to">
-                            <strong>Bill To:</strong>
-                            <p id="bill-client-name">Rahul Sharma</p>
-                            <p id="bill-client-address">123, MG Road, Mumbai, Maharashtra 400001</p>
-                        </div>
-                        
-                        <div class="bill-meta">
-                            <p><strong>Invoice Number:</strong> <span id="bill-invoice-number">FK-2023-0876</span></p>
-                            <p><strong>Invoice Date:</strong> <span id="bill-invoice-date"></span></p>
-                            <p><strong>Due Date:</strong> <span id="bill-due-date"></span></p>
-                        </div>
-                    </div>
-                    
-                    <table class="bill-items">
-                        <thead>
-                            <tr>
-                                <th>Description</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bill-items-body">
-                            <tr>
-                                <td>Wireless Headphones</td>
-                                <td>2</td>
-                                <td>₹1,999.00</td>
-                                <td>₹3,998.00</td>
-                            </tr>
-                            <tr>
-                                <td>Smartphone Case</td>
-                                <td>1</td>
-                                <td>₹499.00</td>
-                                <td>₹499.00</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    
-                    <div class="bill-total">
-                        <p><strong>Subtotal: </strong>₹<span id="bill-subtotal">4,497.00</span></p>
-                        <p><strong>Tax (18%): </strong>₹<span id="bill-tax">809.46</span></p>
-                        <p><strong>Total: </strong>₹<span id="bill-total">5,306.46</span></p>
-                    </div>
-                    
-                    <div class="flipkart-stamp">
-                        <div class="stamp">PAID</div>
-                    </div>
-                    
-                    <div class="bill-notes">
-                        <strong>Notes:</strong>
-                        <p id="bill-notes">Thank you for shopping with us! Items are non-refundable but can be replaced within 10 days if defective.</p>
-                    </div>
-                </div>
-                
-                <div class="action-buttons">
-                    <button id="print-bill" class="btn btn-primary"><i class="fas fa-print"></i> Print</button>
-                    <button id="download-bill" class="btn btn-success"><i class="fas fa-download"></i> Download PDF</button>
-                    <button id="email-bill" class="btn btn-primary"><i class="fas fa-envelope"></i> Email</button>
-                </div>
-            </div>
-        </div>
-        
-        <footer>
-            <p>© 2023 Flipkart-Style Bill Generator | Created with ❤️ for businesses in India</p>
-        </footer>
+
+<div class="box">
+    <h2>Code Generator</h2>
+
+    <div class="len">
+        Length:
+        <input type="number" id="length" value="26" min="6" max="64">
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set default dates
-            const today = new Date();
-            document.getElementById('invoice-date').valueAsDate = today;
-            
-            const dueDate = new Date();
-            dueDate.setDate(today.getDate() + 7);
-            document.getElementById('due-date').valueAsDate = dueDate;
-            
-            // Set initial dates in preview
-            document.getElementById('bill-invoice-date').textContent = formatDate(today);
-            document.getElementById('bill-due-date').textContent = formatDate(dueDate);
-            
-            // Logo upload functionality
-            const logoInput = document.getElementById('logo-upload-input');
-            const logoImage = document.getElementById('logo-image');
-            const logoPlaceholder = document.getElementById('logo-placeholder');
-            const billLogo = document.getElementById('bill-logo');
-            
-            logoInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        logoImage.src = event.target.result;
-                        logoImage.style.display = 'block';
-                        logoPlaceholder.style.display = 'none';
-                        
-                        billLogo.src = event.target.result;
-                        billLogo.style.display = 'block';
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-            
-            // Add item row
-            document.getElementById('add-item').addEventListener('click', function() {
-                const itemsBody = document.getElementById('items-body');
-                const newRow = document.createElement('tr');
-                newRow.innerHTML = `
-                    <td><input type="text" class="item-desc" placeholder="Item description"></td>
-                    <td><input type="number" class="item-qty" placeholder="Qty" min="1" value="1"></td>
-                    <td><input type="number" class="item-price" placeholder="Price" min="0" step="0.01"></td>
-                    <td class="item-total">₹0.00</td>
-                    <td><button class="btn btn-danger remove-item"><i class="fas fa-trash"></i></button></td>
-                `;
-                itemsBody.appendChild(newRow);
-                
-                // Add event listeners to new inputs
-                const inputs = newRow.querySelectorAll('input');
-                inputs.forEach(input => {
-                    input.addEventListener('input', calculateItemTotal);
-                });
-                
-                newRow.querySelector('.remove-item').addEventListener('click', function() {
-                    newRow.remove();
-                    calculateAllTotals();
-                });
-            });
-            
-            // Remove item row
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('remove-item')) {
-                    const row = e.target.closest('tr');
-                    row.remove();
-                    calculateAllTotals();
-                }
-            });
-            
-            // Calculate item total
-            function calculateItemTotal() {
-                const row = this.closest('tr');
-                const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
-                const price = parseFloat(row.querySelector('.item-price').value) || 0;
-                const total = qty * price;
-                row.querySelector('.item-total').textContent = '₹' + formatCurrency(total);
-                
-                calculateAllTotals();
-            }
-            
-            // Calculate all totals
-            function calculateAllTotals() {
-                let subtotal = 0;
-                document.querySelectorAll('.item-total').forEach(totalElement => {
-                    const totalValue = parseFloat(totalElement.textContent.replace('₹', '').replace(/,/g, '')) || 0;
-                    subtotal += totalValue;
-                });
-                
-                const tax = subtotal * 0.18;
-                const total = subtotal + tax;
-                
-                document.getElementById('bill-subtotal').textContent = formatCurrency(subtotal);
-                document.getElementById('bill-tax').textContent = formatCurrency(tax);
-                document.getElementById('bill-total').textContent = formatCurrency(total);
-            }
-            
-            // Format currency for display
-            function formatCurrency(amount) {
-                return amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
-            }
-            
-            // Format date for display
-            function formatDate(date) {
-                return date.toLocaleDateString('en-IN', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric'
-                });
-            }
-            
-            // Add event listeners to existing inputs
-            document.querySelectorAll('.item-qty, .item-price').forEach(input => {
-                input.addEventListener('input', calculateItemTotal);
-            });
-            
-            // Generate bill
-            document.getElementById('generate-bill').addEventListener('click', function() {
-                // Update company info
-                document.getElementById('bill-company-name').textContent = document.getElementById('company-name').value || 'Company Name';
-                document.getElementById('bill-company-address').textContent = document.getElementById('company-address').value || 'Company Address';
-                
-                // Update client info
-                document.getElementById('bill-client-name').textContent = document.getElementById('client-name').value || 'Client Name';
-                document.getElementById('bill-client-address').textContent = document.getElementById('client-address').value || 'Client Address';
-                
-                // Update invoice details
-                document.getElementById('bill-invoice-number').textContent = document.getElementById('invoice-number').value || 'INV-001';
-                
-                const invoiceDate = new Date(document.getElementById('invoice-date').value);
-                document.getElementById('bill-invoice-date').textContent = formatDate(invoiceDate) || '';
-                
-                const dueDate = new Date(document.getElementById('due-date').value);
-                document.getElementById('bill-due-date').textContent = formatDate(dueDate) || '';
-                
-                // Update items
-                const billItemsBody = document.getElementById('bill-items-body');
-                billItemsBody.innerHTML = '';
-                
-                let hasItems = false;
-                document.querySelectorAll('#items-body tr').forEach(row => {
-                    const desc = row.querySelector('.item-desc').value;
-                    const qty = row.querySelector('.item-qty').value;
-                    const price = row.querySelector('.item-price').value;
-                    
-                    if (desc || qty || price) {
-                        hasItems = true;
-                        const total = (parseFloat(qty) || 0) * (parseFloat(price) || 0);
-                        
-                        const newRow = document.createElement('tr');
-                        newRow.innerHTML = `
-                            <td>${desc}</td>
-                            <td>${qty}</td>
-                            <td>₹${formatCurrency(parseFloat(price) || 0)}</td>
-                            <td>₹${formatCurrency(total)}</td>
-                        `;
-                        billItemsBody.appendChild(newRow);
-                    }
-                });
-                
-                if (!hasItems) {
-                    billItemsBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No items added</td></tr>';
-                }
-                
-                // Update notes
-                document.getElementById('bill-notes').textContent = document.getElementById('notes').value || 'Thank you for your business!';
-                
-                // Calculate totals
-                calculateAllTotals();
-                
-                alert('Bill generated successfully!');
-            });
-            
-            // Print bill
-            document.getElementById('print-bill').addEventListener('click', function() {
-                window.print();
-            });
-            
-            // Download PDF (simulated)
-            document.getElementById('download-bill').addEventListener('click', function() {
-                alert('PDF download functionality would typically be implemented with a library like jsPDF. This is a simulation.');
-            });
-            
-            // Email bill (simulated)
-            document.getElementById('email-bill').addEventListener('click', function() {
-                alert('Email functionality would require backend integration. This is a simulation.');
-            });
-            
-            // Initialize calculations
-            calculateAllTotals();
-        });
-    </script>
+    <input type="text" id="result" readonly>
+
+    <button onclick="generateCode()">Generate Code</button>
+    <button class="copy" onclick="copyCode()">Copy Code</button>
+</div>
+
+<script>
+function generateCode() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const length = document.getElementById("length").value;
+    let code = "";
+
+    for (let i = 0; i < length; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    document.getElementById("result").value = code;
+}
+
+function copyCode() {
+    const input = document.getElementById("result");
+    input.select();
+    input.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(input.value);
+    alert("Code copied!");
+}
+
+// Auto-generate on load
+generateCode();
+</script>
+
 </body>
 </html>
