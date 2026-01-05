@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Code Generator</title>
+<title>CPKA Code Generator</title>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -76,11 +76,11 @@
 <body>
 
 <div class="box">
-    <h2>Code Generator</h2>
+    <h2>CPKA Code Generator</h2>
 
     <div class="len">
-        Length:
-        <input type="number" id="length" value="26" min="6" max="64">
+        Total Length (min 5):
+        <input type="number" id="length" value="26" min="5" max="64">
     </div>
 
     <input type="text" id="result" readonly>
@@ -91,11 +91,19 @@
 
 <script>
 function generateCode() {
+    const prefix = "CPKA"; // always fixed
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    const length = document.getElementById("length").value;
-    let code = "";
+    const totalLength = parseInt(document.getElementById("length").value);
 
-    for (let i = 0; i < length; i++) {
+    if (totalLength <= prefix.length) {
+        alert("Length must be more than 4");
+        return;
+    }
+
+    let code = prefix;
+    let remainingLength = totalLength - prefix.length;
+
+    for (let i = 0; i < remainingLength; i++) {
         code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
 
@@ -110,7 +118,7 @@ function copyCode() {
     alert("Code copied!");
 }
 
-// Auto-generate on load
+// auto-generate on load
 generateCode();
 </script>
 
