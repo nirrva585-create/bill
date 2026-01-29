@@ -1,126 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>CPKA Code Generator</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #0f172a;
-        color: #fff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-    }
-
-    .box {
-        background: #020617;
-        padding: 25px;
-        border-radius: 10px;
-        width: 360px;
-        text-align: center;
-        box-shadow: 0 0 20px rgba(0,0,0,0.6);
-    }
-
-    h2 {
-        margin-bottom: 15px;
-    }
-
-    input {
-        width: 100%;
-        padding: 12px;
-        font-size: 16px;
-        text-align: center;
-        border-radius: 6px;
-        border: none;
-        margin-bottom: 10px;
-        background: #020617;
-        color: #22c55e;
-        border: 1px solid #334155;
-    }
-
-    button {
-        width: 100%;
-        padding: 12px;
-        font-size: 16px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        margin-top: 8px;
-        background: #22c55e;
-        color: #020617;
-        font-weight: bold;
-    }
-
-    button:hover {
-        background: #16a34a;
-    }
-
-    .copy {
-        background: #38bdf8;
-    }
-
-    .copy:hover {
-        background: #0ea5e9;
-    }
-
-    .len {
-        margin-bottom: 10px;
-        color: #cbd5f5;
-        font-size: 14px;
-    }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meme Coin DexScreener Tool - Whale/Entry/Scam Alerts</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #111; color: #eee; margin: 20px; }
+    h1 { text-align: center; color: #0f0; }
+    table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+    th, td { border: 1px solid #333; padding: 10px; text-align: center; }
+    th { background: #222; }
+    .entry { background: #004400; } /* Potential good entry */
+    .alert { background: #440000; } /* Scam/rug risk */
+    .link { color: #0ff; text-decoration: none; }
+    #last-update { text-align: center; font-style: italic; }
+    #error { color: #f00; text-align: center; }
+  </style>
 </head>
 <body>
+  <h1>Meme Coin Dashboard (DexScreener API - Real-Time, No Fake Data)</h1>
+  <p style="text-align:center;">Focus: Boosted Solana meme coins. Auto-updates every 60s.<br>
+  Whale/Entry: High m5 buys + volume. Scam/Rug Alert: High sells, low liq, sharp drops.<br>
+  Limitations: Aggregated data only; basic alerts (not foolproof). DYOR!</p>
+  <div id="last-update">Loading...</div>
+  <div id="error"></div>
+  <table id="table">
+    <thead>
+      <tr>
+        <th>Token</th>
+        <th>Price USD</th>
+        <th>FDV</th>
+        <th>Liquidity USD</th>
+        <th>m5 Buys/Sells</th>
+        <th>m5 Volume</th>
+        <th>m5 % Change</th>
+        <th>Age (min)</th>
+        <th>Boost Amount</th>
+        <th>Alerts / Entry</th>
+        <th>DexScreener</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
 
-<div class="box">
-    <h2>CPKA Code Generator</h2>
+  <script>
+    const BOOST_URL = 'https://api.dexscreener.com/token-boosts/top/v1'; // or /latest/v1 for recent
+    const TABLE = document.getElementById('tbody');
+    const UPDATE_EL = document.getElementById('last-update');
+    const ERROR_EL = document.getElementById('error');
 
-    <div class="len">
-        Total Length (min 5):
-        <input type="number" id="length" value="26" min="5" max="64">
-    </div>
-
-    <input type="text" id="result" readonly>
-
-    <button onclick="generateCode()">Generate Code</button>
-    <button class="copy" onclick="copyCode()">Copy Code</button>
-</div>
-
-<script>
-function generateCode() {
-    const prefix = "CPKA"; // always fixed
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    const totalLength = parseInt(document.getElementById("length").value);
-
-    if (totalLength <= prefix.length) {
-        alert("Length must be more than 4");
-        return;
+    async function fetchJson(url) {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
     }
 
-    let code = prefix;
-    let remainingLength = totalLength - prefix.length;
+    async function loadData() {
+      try {
+        ERROR_EL.textContent = '';
+        const boosts = await fetchJson(BOOST_URL);
+        const solanaBoosts = boosts.filter(b => b.chainId === 'solana').slice(0, 15); // Top 15 Solana to avoid rate limits
 
-    for (let i = 0; i < remainingLength; i++) {
-        code += chars.charAt(Math.floor(Math.random() * chars.length));
+        const promises = solanaBoosts.map(async (boost) => {
+          try {
+            const pairsData = await fetchJson(`https://api.dexscreener.com/tokens/v1/${boost.chainId}/${boost.tokenAddress}`);
+            const pair = pairsData[0]; // Main pair (usually highest liq)
+            if (!pair) return null;
+
+            const ageMin = Math.round((Date.now() - pair.pairCreatedAt) / 60000);
+            const m5Buys = pair.txns?.m5?.buys || 0;
+            const m5Sells = pair.txns?.m5?.sells || 0;
+            const m5Vol = pair.volume?.m5 || 0;
+            const m5Change = pair.priceChange?.m5 || 0;
+            const liq = pair.liquidity?.usd || 0;
+            const fdv = pair.fdv || 0;
+
+            let alert = '';
+            if (m5Sells > m5Buys * 2 || m5Change < -30 || liq < 10000) {
+              alert = 'Rug/Scam Risk! High sells/low liq/drop.';
+            } else if (m5Buys > 20 && m5Vol > 10000 && fdv < 1000000 && ageMin < 1440) { // Example: high buys, volume, low FDV, <1 day old
+              alert = 'Potential Entry! Whale activity?';
+            }
+
+            return {
+              symbol: pair.baseToken.symbol,
+              price: pair.priceUsd ? Number(pair.priceUsd).toFixed(6) : 'N/A',
+              fdv: fdv ? fdv.toLocaleString() : 'N/A',
+              liq: liq ? liq.toLocaleString() : 'N/A',
+              m5BuysSells: `${m5Buys}/${m5Sells}`,
+              m5Vol: m5Vol ? m5Vol.toLocaleString() : 'N/A',
+              m5Change: m5Change ? m5Change.toFixed(2) + '%' : 'N/A',
+              age: ageMin,
+              boost: boost.totalAmount || boost.amount || 'N/A',
+              alert,
+              url: pair.url || boost.url || `https://dexscreener.com/solana/${boost.tokenAddress}`
+            };
+          } catch (e) {
+            return null;
+          }
+        });
+
+        const results = (await Promise.all(promises)).filter(Boolean);
+        // Sort: prioritize potential entries or high boost
+        results.sort((a, b) => (b.alert.includes('Entry') ? 1 : 0) - (a.alert.includes('Entry') ? 1 : 0) || b.boost - a.boost);
+
+        TABLE.innerHTML = '';
+        results.forEach(r => {
+          const row = document.createElement('tr');
+          if (r.alert.includes('Entry')) row.classList.add('entry');
+          if (r.alert.includes('Risk')) row.classList.add('alert');
+          row.innerHTML = `
+            <td>${r.symbol}</td>
+            <td>$${r.price}</td>
+            <td>$${r.fdv}</td>
+            <td>$${r.liq}</td>
+            <td>${r.m5BuysSells}</td>
+            <td>$${r.m5Vol}</td>
+            <td>${r.m5Change}</td>
+            <td>${r.age}</td>
+            <td>${r.boost}</td>
+            <td>${r.alert || '-'}</td>
+            <td><a href="${r.url}" target="_blank" class="link">View</a></td>
+          `;
+          TABLE.appendChild(row);
+        });
+
+        UPDATE_EL.textContent = `Last update: ${new Date().toLocaleTimeString()}`;
+      } catch (err) {
+        ERROR_EL.textContent = 'Error loading data: ' + err.message + ' (API may be rate-limited; try again later)';
+      }
     }
 
-    document.getElementById("result").value = code;
-}
-
-function copyCode() {
-    const input = document.getElementById("result");
-    input.select();
-    input.setSelectionRange(0, 99999);
-    navigator.clipboard.writeText(input.value);
-    alert("Code copied!");
-}
-
-// auto-generate on load
-generateCode();
-</script>
-
+    loadData();
+    setInterval(loadData, 60000); // Auto-refresh every 60s
+  </script>
 </body>
 </html>
